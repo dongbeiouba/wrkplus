@@ -8,7 +8,7 @@
 
 #include "ssl.h"
 
-SSL_CTX *ssl_init() {
+SSL_CTX *ssl_init(bool sess_reuse) {
     SSL_CTX *ctx = NULL;
 
     SSL_load_error_strings();
@@ -19,7 +19,11 @@ SSL_CTX *ssl_init() {
         SSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, NULL);
         SSL_CTX_set_verify_depth(ctx, 0);
         SSL_CTX_set_mode(ctx, SSL_MODE_AUTO_RETRY);
-        SSL_CTX_set_session_cache_mode(ctx, SSL_SESS_CACHE_CLIENT);
+        if (sess_reuse) {
+            SSL_CTX_set_session_cache_mode(ctx, SSL_SESS_CACHE_CLIENT);
+        } else {
+            SSL_CTX_set_session_cache_mode(ctx, SSL_SESS_CACHE_OFF);
+        }
     }
 
     return ctx;
